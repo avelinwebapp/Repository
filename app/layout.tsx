@@ -28,13 +28,31 @@ const instrumentSerif = Instrument_Serif({
 const isV0 = process.env["VERCEL_URL"]?.includes("vusercontent.net") ?? false
 
 export const metadata: Metadata = {
-  title: {
-    template: "%s | Avelin",
-    default: "Avelin",
+  metadataBase: new URL("https://www.avelin.kr"),
+  title: "AVELIN | 아벨린",
+  description: "아벨린(Avelin) 공식 웹사이트에 오신 것을 환영합니다.",
+  openGraph: {
+    title: "AVELIN | 아벨린",
+    description: "아벨린(Avelin) 공식 웹사이트에 오신 것을 환영합니다.",
+    url: "https://www.avelin.kr",
+    siteName: "AVELIN",
+    images: [
+      {
+        url: "/02.main.jpg",
+        width: 1200,
+        height: 630,
+        alt: "AVELIN Main Image",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
   },
-  description:
-    "We stand at the forefront of a new era, where creativity meets technology to redefine what's possible. Our mission is to empower individuals and businesses alike with groundbreaking solutions that inspire change and drive progress.",
-    generator: 'v0.app'
+  twitter: {
+    card: "summary_large_image",
+    title: "AVELIN | 아벨린",
+    description: "아벨린(Avelin) 공식 웹사이트에 오신 것을 환영합니다.",
+    images: ["/02.main.jpg"],
+  },
 }
 
 export default function RootLayout({
