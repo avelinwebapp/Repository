@@ -1,8 +1,21 @@
+@import url("/pretendardvariable.css");
+
 @font-face {
   font-family: 'Moniqa';
-  src: url('/Moniqa.otf') format('opentype');
+  src: url('/Moniqa_1.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'Avenir';
+  src: url('/Avenir.ttc');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-avenir {
+  font-family: 'Avenir', sans-serif;
 }
 
 @tailwind base;
@@ -62,9 +75,11 @@
     transform: translateX(-100%);
     opacity: 0;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     transform: translateX(200%);
     opacity: 0;
@@ -75,6 +90,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

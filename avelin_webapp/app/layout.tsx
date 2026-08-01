@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn("font-sans antialiased", geistSans.variable, geistMono.variable, instrumentSerif.variable)}>
         <V0Provider isV0={isV0}>
           {children}

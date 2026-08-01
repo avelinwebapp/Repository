@@ -33,7 +33,7 @@ module.exports = {
         shine: "shine 2s ease-in-out infinite",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "sans-serif"],
+        sans: ["'Pretendard Variable'", "Pretendard", "var(--font-geist-sans)", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
         serif: ["Moniqa", "var(--font-instrument-serif)", "serif"],
       },

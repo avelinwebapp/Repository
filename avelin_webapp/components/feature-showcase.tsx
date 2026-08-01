@@ -45,24 +45,63 @@ const features: Feature[] = [
   },
 ]
 
-export function FeatureShowcase() {
+interface FeatureShowcaseProps {
+  onBookSeat?: (spaceId: string, spaceTitle: string, seatName: string) => void
+  activeTab?: "explore" | "my-reservations"
+  setActiveTab?: (tab: "explore" | "my-reservations") => void
+  reservationsCount?: number
+}
+
+export function FeatureShowcase({
+  onBookSeat,
+  activeTab = "explore",
+  setActiveTab,
+  reservationsCount = 0,
+}: FeatureShowcaseProps) {
   const [expandedFeature, setExpandedFeature] = useState<string | null>(null)
 
   const expanded = features.find((f) => f.id === expandedFeature)
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden grid lg:grid-cols-[420px_1fr]">
+    <div className="relative h-[100dvh] w-full overflow-hidden grid grid-rows-[40vh_1fr] lg:grid-rows-none lg:grid-cols-[420px_1fr]">
       {/* Sidebar - Feature Buttons */}
-      <div className="flex flex-col gap-3 p-4 md:p-6 lg:p-8 lg:sticky lg:top-0 h-screen overflow-y-auto max-w-full">
+      <div className="flex flex-col gap-3 p-4 md:p-6 lg:p-8 order-2 lg:order-1 lg:sticky lg:top-0 h-full lg:h-screen overflow-y-auto max-w-full">
         {/* PLACE Card */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-[2rem] p-6 mb-2"
         >
-          <h3 className="text-white font-semibold mb-2 text-2xl">
-            PLACE
-          </h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-white font-semibold text-2xl">
+              PLACE
+            </h3>
+            <div className="flex bg-zinc-950 p-1 border border-zinc-800/80 rounded-xl text-xs">
+              <button 
+                onClick={() => setActiveTab?.("explore")}
+                className={`px-3 py-1.5 rounded-lg transition-all ${activeTab === "explore" ? "bg-zinc-800 text-white font-medium" : "text-zinc-500 hover:text-zinc-300"}`}
+              >
+                공간 소개
+              </button>
+              <button 
+                onClick={() => onBookSeat?.("lounge", "1F - 아베린 라운지", "SEAT 001")}
+                className="px-3 py-1.5 rounded-lg transition-all text-zinc-400 hover:text-white flex items-center gap-1 font-medium"
+              >
+                예약하기
+              </button>
+              <button 
+                onClick={() => setActiveTab?.("my-reservations")}
+                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${activeTab === "my-reservations" ? "bg-zinc-800 text-white font-medium" : "text-zinc-500 hover:text-zinc-300"}`}
+              >
+                나의 예약
+                {reservationsCount > 0 && (
+                  <span className="bg-white text-black font-bold rounded-full w-4 h-4 flex items-center justify-center text-[9px]">
+                    {reservationsCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
           <p className="text-sm text-zinc-400">원하는 공간과 컨셉을 선택해주세요.</p>
         </motion.div>
 
@@ -104,6 +143,14 @@ export function FeatureShowcase() {
                         {feature.description}
                       </p>
                       
+                      <button
+                        onClick={() => onBookSeat?.(feature.id, feature.title, "SEAT 001")}
+                        className="w-full py-2.5 mb-4 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        이 공간 예약하기 (Book Space)
+                      </button>
+                      
                       {feature.concepts && (
                         <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
                           <p className="text-xs font-semibold text-white/50 uppercase tracking-widest">Select Concept</p>
@@ -111,6 +158,7 @@ export function FeatureShowcase() {
                             {feature.concepts.map(concept => (
                               <button 
                                 key={concept} 
+                                onClick={() => onBookSeat?.(feature.id, feature.title, concept)}
                                 className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-white/80 hover:bg-white/10 hover:text-white hover:border-white/30 transition-all shadow-sm"
                               >
                                 {concept}
@@ -129,7 +177,7 @@ export function FeatureShowcase() {
       </div>
 
       {/* Main Image Area */}
-      <div className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-[40vh] lg:h-screen bg-black flex items-center justify-center overflow-hidden order-1 lg:order-2">
         <AnimatePresence mode="wait">
           {expanded ? (
             <motion.div
