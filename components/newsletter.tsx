@@ -258,8 +258,23 @@ export const Newsletter = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [lastSelectedItem, setLastSelectedItem] = useState<string | null>(null);
 
+  const [direction, setDirection] = useState<number>(0);
+
+  const handleNextMenu = () => {
+    if (!category) return;
+    setDirection(1);
+    setMenuIndex((prev) => (prev + 1) % MENU_ITEMS[category].length);
+  };
+
+  const handlePrevMenu = () => {
+    if (!category) return;
+    setDirection(-1);
+    setMenuIndex((prev) => (prev - 1 + MENU_ITEMS[category].length) % MENU_ITEMS[category].length);
+  };
+
   useEffect(() => {
     setMenuIndex(0);
+    setDirection(0);
     setQuantity(1);
   }, [category]);
 
@@ -435,7 +450,10 @@ export const Newsletter = ({
                 {/* Header Category Tabs */}
                 <div className="flex items-center gap-2 p-1.5 rounded-full bg-black/50 border border-white/15 backdrop-blur-xl shadow-xl">
                   <button
-                    onClick={() => setCategory("drink")}
+                    onClick={() => {
+                      setDirection(0);
+                      setCategory("drink");
+                    }}
                     className={cn(
                       "px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5",
                       category === "drink"
@@ -446,7 +464,10 @@ export const Newsletter = ({
                     <span>☕</span> 음료
                   </button>
                   <button
-                    onClick={() => setCategory("food")}
+                    onClick={() => {
+                      setDirection(0);
+                      setCategory("food");
+                    }}
                     className={cn(
                       "px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5",
                       category === "food"
@@ -459,28 +480,76 @@ export const Newsletter = ({
                 </div>
               </div>
 
-              {/* Pure Menu Card Slider (No Outer Frame) */}
-              <div className="absolute inset-0 flex items-center justify-center w-full h-full pointer-events-none pt-16 pb-6 px-4">
-                <div className="w-full h-full max-h-[85vh] flex flex-row gap-5 md:gap-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory items-center justify-start md:justify-center scroll-smooth px-4 md:px-8 pointer-events-auto">
-                  {MENU_ITEMS[category].map((item) => (
-                    <MenuItemCard
-                      key={item.id}
-                      item={item}
-                      category={category}
-                      onSelect={(orderName) => {
-                        setLastSelectedItem(orderName);
-                        setShowConfirmModal(true);
-                      }}
-                      setSelectedDrink={setSelectedDrink}
-                      setSelectedFood={setSelectedFood}
-                    />
-                  ))}
+              {/* Single Menu Card Display (One item per screen) */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center w-full h-full pointer-events-none pt-16 pb-8 px-4">
+                <div className="relative w-full max-w-[400px] sm:max-w-[440px] flex flex-col items-center justify-center pointer-events-auto">
+                  {/* Card with Animated Transition */}
+                  <AnimatePresence mode="wait" custom={direction}>
+                    <motion.div
+                      key={`${category}-${menuIndex}`}
+                      custom={direction}
+                      initial={{ opacity: 0, x: direction > 0 ? 100 : direction < 0 ? -100 : 0, scale: 0.96 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: direction > 0 ? -100 : direction < 0 ? 100 : 0, scale: 0.96 }}
+                      transition={{ type: "spring", stiffness: 320, damping: 30 }}
+                      className="w-full flex justify-center"
+                    >
+                      <MenuItemCard
+                        item={MENU_ITEMS[category][menuIndex % MENU_ITEMS[category].length]}
+                        category={category}
+                        onSelect={(orderName) => {
+                          setLastSelectedItem(orderName);
+                          setShowConfirmModal(true);
+                        }}
+                        setSelectedDrink={setSelectedDrink}
+                        setSelectedFood={setSelectedFood}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {/* Navigation Arrows */}
+                  <button
+                    onClick={handlePrevMenu}
+                    className="absolute -left-3 sm:-left-16 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-13 sm:h-13 rounded-full border border-white/20 bg-black/60 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all active:scale-95 shadow-2xl z-50 pointer-events-auto"
+                    aria-label="이전 메뉴"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={handleNextMenu}
+                    className="absolute -right-3 sm:-right-16 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-13 sm:h-13 rounded-full border border-white/20 bg-black/60 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all active:scale-95 shadow-2xl z-50 pointer-events-auto"
+                    aria-label="다음 메뉴"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+
+                  {/* Bottom Indicator Dots & Page Numbers */}
+                  <div className="flex items-center gap-2 mt-4 z-50 pointer-events-auto bg-black/70 backdrop-blur-md px-4 py-2 rounded-full border border-white/15 shadow-lg">
+                    {MENU_ITEMS[category].map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setDirection(idx > menuIndex ? 1 : -1);
+                          setMenuIndex(idx);
+                        }}
+                        className={cn(
+                          "h-2 rounded-full transition-all duration-300",
+                          idx === menuIndex
+                            ? "bg-amber-400 w-6"
+                            : "bg-white/30 hover:bg-white/60 w-2"
+                        )}
+                      />
+                    ))}
+                    <span className="text-xs font-mono font-bold text-amber-300 ml-2 tracking-widest">
+                      {menuIndex + 1} / {MENU_ITEMS[category].length}
+                    </span>
+                  </div>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {view === "experience" && (
+          {view === "experience" && !category && (
             <motion.div
               key="controls-layer"
               initial={{ opacity: 0 }}
@@ -490,26 +559,14 @@ export const Newsletter = ({
               className="absolute inset-0 w-full h-[100dvh] pointer-events-none z-40"
             >
               <button
-                onClick={() => {
-                  if (category) {
-                    setMenuIndex((prev) => (prev - 1 + MENU_ITEMS[category].length) % MENU_ITEMS[category].length);
-                  } else {
-                    handlePrevVideo();
-                  }
-                }}
+                onClick={() => handlePrevVideo()}
                 className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full border border-white/10 bg-white/5 backdrop-blur-md items-center justify-center text-white/70 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all pointer-events-auto hover:scale-105 active:scale-95 shadow-lg z-50"
               >
                 <ChevronLeft className="w-8 h-8" />
               </button>
 
               <button
-                onClick={() => {
-                  if (category) {
-                    setMenuIndex((prev) => (prev + 1) % MENU_ITEMS[category].length);
-                  } else {
-                    handleNextVideo();
-                  }
-                }}
+                onClick={() => handleNextVideo()}
                 className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full border border-white/10 bg-white/5 backdrop-blur-md items-center justify-center text-white/70 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all pointer-events-auto hover:scale-105 active:scale-95 shadow-lg z-50"
               >
                 <ChevronRight className="w-8 h-8" />
