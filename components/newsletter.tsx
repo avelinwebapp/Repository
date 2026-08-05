@@ -483,16 +483,28 @@ export const Newsletter = ({
               {/* Single Menu Card Display (One item per screen) */}
               <div className="absolute inset-0 flex flex-col items-center justify-center w-full h-full pointer-events-none pt-16 pb-8 px-4">
                 <div className="relative w-full max-w-[400px] sm:max-w-[440px] flex flex-col items-center justify-center pointer-events-auto">
-                  {/* Card with Animated Transition */}
+                  {/* Card with Animated Transition & Drag/Swipe */}
                   <AnimatePresence mode="wait" custom={direction}>
                     <motion.div
                       key={`${category}-${menuIndex}`}
                       custom={direction}
-                      initial={{ opacity: 0, x: direction > 0 ? 100 : direction < 0 ? -100 : 0, scale: 0.96 }}
+                      initial={{ opacity: 0, x: direction > 0 ? 120 : direction < 0 ? -120 : 0, scale: 0.95 }}
                       animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: direction > 0 ? -100 : direction < 0 ? 100 : 0, scale: 0.96 }}
-                      transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                      className="w-full flex justify-center"
+                      exit={{ opacity: 0, x: direction > 0 ? -120 : direction < 0 ? 120 : 0, scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.2}
+                      onDragEnd={(event, info) => {
+                        const swipeThreshold = 40;
+                        const velocityThreshold = 300;
+                        if (info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold) {
+                          handleNextMenu();
+                        } else if (info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold) {
+                          handlePrevMenu();
+                        }
+                      }}
+                      className="w-full flex justify-center cursor-grab active:cursor-grabbing touch-pan-y"
                     >
                       <MenuItemCard
                         item={MENU_ITEMS[category][menuIndex % MENU_ITEMS[category].length]}
@@ -523,25 +535,10 @@ export const Newsletter = ({
                     <ChevronRight className="w-6 h-6" />
                   </button>
 
-                  {/* Bottom Indicator Dots & Page Numbers */}
-                  <div className="flex items-center gap-2 mt-4 z-50 pointer-events-auto bg-black/70 backdrop-blur-md px-4 py-2 rounded-full border border-white/15 shadow-lg">
-                    {MENU_ITEMS[category].map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          setDirection(idx > menuIndex ? 1 : -1);
-                          setMenuIndex(idx);
-                        }}
-                        className={cn(
-                          "h-2 rounded-full transition-all duration-300",
-                          idx === menuIndex
-                            ? "bg-amber-400 w-6"
-                            : "bg-white/30 hover:bg-white/60 w-2"
-                        )}
-                      />
-                    ))}
-                    <span className="text-xs font-mono font-bold text-amber-300 ml-2 tracking-widest">
-                      {menuIndex + 1} / {MENU_ITEMS[category].length}
+                  {/* Swipe Hint */}
+                  <div className="mt-4 z-50 pointer-events-auto">
+                    <span className="text-[11px] font-medium text-white/70 tracking-wider animate-pulse flex items-center gap-1.5">
+                      <span>←</span> 좌우로 슬라이드(스와이프)하여 이동 <span>→</span>
                     </span>
                   </div>
                 </div>

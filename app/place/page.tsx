@@ -328,7 +328,7 @@ export default function PlacePage() {
           <div className="relative z-10 pb-20">
             {/* Page Title Area */}
             <div className="mb-10 text-center md:text-left flex-shrink-0 pt-16 lg:pt-8">
-              <h1 className="text-4xl sm:text-5xl font-serif tracking-wider mb-3 uppercase text-white">Space Reservation</h1>
+              <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif tracking-wider mb-3 uppercase text-white">Space Reservation</h1>
               <p className="text-zinc-300 text-base sm:text-lg font-medium">원하는 공간을 둘러보고 예약하세요.</p>
             </div>
 
@@ -352,7 +352,7 @@ export default function PlacePage() {
             {activeMode === "lookup" && (
             <div id="reservations-list-section">
               <div className="mb-6 text-center md:text-left">
-                <h2 className="text-3xl font-serif tracking-wider mb-2">MY RESERVATIONS</h2>
+                <h2 className="text-4xl sm:text-5xl font-serif tracking-wider mb-2">MY RESERVATIONS</h2>
                 <p className="text-zinc-300 text-sm">예약 및 이용 내역을 관리하세요.</p>
               </div>
 
@@ -555,7 +555,7 @@ export default function PlacePage() {
               )}
 
               <div className="w-full bg-zinc-900/40 backdrop-blur-md border border-zinc-800/80 rounded-[2rem] p-8 sm:p-10 md:p-12 shadow-2xl">
-                <h2 className="text-3xl sm:text-4xl font-serif tracking-wider text-center border-b border-zinc-800/80 pb-6 mb-10 text-white">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif tracking-wider text-center border-b border-zinc-800/80 pb-6 mb-10 text-white">
                   RESERVE A SPACE
                 </h2>
 
@@ -672,7 +672,7 @@ export default function PlacePage() {
                 </div>
 
                 {/* Seat Selection */}
-                <div className="hidden md:flex flex-col gap-5 sm:gap-6">
+                <div className="flex flex-col gap-5 sm:gap-6">
                   <label className="text-base sm:text-lg font-bold text-zinc-300 uppercase tracking-widest">좌석 선택</label>
                   <div className="w-full max-w-md sm:max-w-lg mx-auto bg-zinc-950 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col items-center border border-zinc-800/80">
                     
